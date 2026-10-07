@@ -1,12 +1,669 @@
-<!-- Redirect to /calculadora/ or direct serve -->
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=calculadora/">
-  <script>window.location.href = "calculadora/";</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Preços e Lucros — Casinhas e Comedouros de Aves</title>
+  <link rel="icon" href="images/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #f95716;
+      --primary-hover: #e0460a;
+      --primary-light: #fff3ec;
+      --wood-dark: #2d1806;
+      --wood-bg: #faf7f2;
+      --card-bg: #ffffff;
+      --text: #2c1a0e;
+      --text-muted: #6b5747;
+      --border: #ebdcd0;
+      --success: #16a34a;
+      --success-light: #ecfdf5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Nunito', system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--wood-bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #f95716 0%, #ff7a29 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(249, 87, 22, 0.25);
+    }
+
+    header h1 {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 15px;
+      opacity: 0.95;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: -20px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Presets */
+    .presets-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .presets-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: var(--primary-light);
+      border: 1px solid rgba(249, 87, 22, 0.2);
+      color: var(--primary);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Grid Layout */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 860px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--wood-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 700;
+      color: #999;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Slider Range */
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+      height: 6px;
+      cursor: pointer;
+    }
+
+    .range-val {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      min-width: 60px;
+      text-align: right;
+    }
+
+    /* Results Sticky Card */
+    .results-card {
+      position: sticky;
+      top: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #fffbf8 100%);
+      border: 2px solid var(--primary);
+      box-shadow: 0 15px 35px -5px rgba(249, 87, 22, 0.15);
+    }
+
+    .price-box {
+      background: linear-gradient(135deg, #f95716 0%, #ff7a29 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(249, 87, 22, 0.3);
+    }
+
+    .price-box .sub {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .price-box .price {
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 6px 0;
+    }
+
+    .price-box .margin-tag {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 14px;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .summary-item .label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .summary-item .value {
+      font-weight: 700;
+      color: var(--wood-dark);
+    }
+
+    .summary-item.total-cost .value {
+      color: #dc2626;
+    }
+
+    .summary-item.net-profit .value {
+      color: var(--success);
+      font-size: 16px;
+    }
+
+    .action-buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #f3ece6;
+      color: var(--wood-dark);
+    }
+    .btn-secondary:hover {
+      background: #e6ded7;
+    }
+
+    .tip-box {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12px;
+      color: #854d0e;
+      margin-top: 16px;
+      line-height: 1.4;
+    }
+
+    @media print {
+      header, .presets-card, .action-buttons, .tip-box {
+        display: none !important;
+      }
+      .calc-grid {
+        display: block;
+      }
+      .results-card {
+        border: 1px solid #333;
+        box-shadow: none;
+      }
+    }
+  </style>
 </head>
 <body>
-  <p>Redirecionando para <a href="calculadora/">Calculadora de Preços e Lucros</a>...</p>
+
+  <header>
+    <h1>Calculadora de Preços & Lucros</h1>
+    <p>Ferramenta oficial para precificação de casinhas e comedouros de madeira. Calcule materiais, mão de obra e lucro real!</p>
+  </header>
+
+  <div class="container">
+    <!-- Presets -->
+    <div class="presets-card">
+      <span class="presets-title">Carregar modelo pronto:</span>
+      <div class="preset-buttons">
+        <button class="preset-btn" onclick="loadPreset('ninho')">🏠 Casinha Ninho Simples</button>
+        <button class="preset-btn" onclick="loadPreset('comedouro')">🌾 Comedouro Automático</button>
+        <button class="preset-btn" onclick="loadPreset('dupla')">⭐ Casinha Grande / Em L</button>
+        <button class="preset-btn" onclick="resetForm()">🔄 Limpar</button>
+      </div>
+    </div>
+
+    <div class="calc-grid">
+      <!-- Inputs Column -->
+      <div class="inputs-col">
+        
+        <!-- Modelo -->
+        <div class="card">
+          <div class="card-title">📦 Identificação do Projeto</div>
+          <div class="form-group">
+            <label>Nome do Modelo / Projeto</label>
+            <div class="input-wrapper">
+              <span class="input-prefix" style="left: 10px;">🏷️</span>
+              <input type="text" id="modelName" value="Casinha Ninho para Pássaros">
+            </div>
+          </div>
+        </div>
+
+        <!-- Madeiras -->
+        <div class="card">
+          <div class="card-title">🪵 Madeiras e Chapas</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Madeira Principal (Pinus / Compensado)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costWood" step="0.10" value="12.50" oninput="calculate()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Ripas, Telhado e Poleiro</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costSlats" step="0.10" value="3.50" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ferragens e Insumos -->
+        <div class="card">
+          <div class="card-title">🔩 Ferragens & Fixação</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Parafusos, Pregos e Dobradiças</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costHardware" step="0.10" value="2.80" oninput="calculate()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Cola Atóxica e Lixas</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costGlue" step="0.10" value="1.50" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acabamento e Pintura -->
+        <div class="card">
+          <div class="card-title">🎨 Pintura & Acabamento Seguro</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tinta / Corante à Base d'Água</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costPaint" step="0.10" value="3.00" oninput="calculate()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Verniz Ecológico / Selador</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costFinish" step="0.10" value="2.50" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mão de Obra -->
+        <div class="card">
+          <div class="card-title">⏱️ Mão de Obra (Seu Tempo)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tempo de Confecção (Horas)</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">🕒</span>
+                <input type="number" id="laborHours" step="0.25" value="1.0" oninput="calculate()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Valor da Sua Hora de Trabalho</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="laborHourlyRate" step="1.00" value="18.00" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Embalagem e Outros -->
+        <div class="card">
+          <div class="card-title">📦 Embalagem & Custos Extras</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Caixa / Plástico Bolha / Etiqueta</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costPackaging" step="0.10" value="2.50" oninput="calculate()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Energia e Desgaste de Lâmina</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">R$</span>
+                <input type="number" id="costOverhead" step="0.10" value="1.50" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Column -->
+      <div class="results-col">
+        <div class="card results-card">
+          <div class="card-title">💰 Resultado da Precificação</div>
+
+          <div class="price-box">
+            <div class="sub">Preço de Venda Sugerido</div>
+            <div class="price" id="resSalePrice">R$ 0,00</div>
+            <div class="margin-tag" id="resMarginTag">Margem: 100%</div>
+          </div>
+
+          <!-- Margem Slider -->
+          <div class="form-group">
+            <label>Margem de Lucro Desejada:</label>
+            <div class="range-wrap">
+              <input type="range" id="profitMargin" min="20" max="250" value="100" step="5" oninput="updateMarginLabel(); calculate();">
+              <span class="range-val" id="marginVal">100%</span>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <span class="label">Custo de Materiais Diretos:</span>
+            <span class="value" id="resMaterialsCost">R$ 0,00</span>
+          </div>
+
+          <div class="summary-item">
+            <span class="label">Custo da Mão de Obra:</span>
+            <span class="value" id="resLaborCost">R$ 0,00</span>
+          </div>
+
+          <div class="summary-item total-cost">
+            <span class="label">Custo Total de Fabricação:</span>
+            <span class="value" id="resTotalCost">R$ 0,00</span>
+          </div>
+
+          <div class="summary-item net-profit">
+            <span class="label">Lucro Líquido por Peça:</span>
+            <span class="value" id="resNetProfit">R$ 0,00</span>
+          </div>
+
+          <div class="summary-item">
+            <span class="label">Lucro Estimado com 10 vendas:</span>
+            <span class="value" id="resMonthProfit" style="color: var(--primary);">R$ 0,00</span>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="copySummary()">📋 Copiar Orçamento p/ WhatsApp</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+          </div>
+
+          <div class="tip-box">
+            💡 <strong>Dica de Venda:</strong> Sempre cobre no mínimo 100% de margem em peças artesanais personalizadas para garantir retorno alto e reinvestir em madeiras e ferramentas!
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateMarginLabel() {
+      const margin = document.getElementById('profitMargin').value;
+      document.getElementById('marginVal').textContent = margin + '%';
+      document.getElementById('resMarginTag').textContent = 'Margem: ' + margin + '%';
+    }
+
+    function calculate() {
+      const costWood = parseFloat(document.getElementById('costWood').value) || 0;
+      const costSlats = parseFloat(document.getElementById('costSlats').value) || 0;
+      const costHardware = parseFloat(document.getElementById('costHardware').value) || 0;
+      const costGlue = parseFloat(document.getElementById('costGlue').value) || 0;
+      const costPaint = parseFloat(document.getElementById('costPaint').value) || 0;
+      const costFinish = parseFloat(document.getElementById('costFinish').value) || 0;
+      const costPackaging = parseFloat(document.getElementById('costPackaging').value) || 0;
+      const costOverhead = parseFloat(document.getElementById('costOverhead').value) || 0;
+
+      const laborHours = parseFloat(document.getElementById('laborHours').value) || 0;
+      const laborHourlyRate = parseFloat(document.getElementById('laborHourlyRate').value) || 0;
+      const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
+
+      const materialsCost = costWood + costSlats + costHardware + costGlue + costPaint + costFinish + costPackaging + costOverhead;
+      const laborCost = laborHours * laborHourlyRate;
+      const totalCost = materialsCost + laborCost;
+
+      const profit = totalCost * (profitMargin / 100);
+      const salePrice = totalCost + profit;
+      const monthProfit = profit * 10;
+
+      document.getElementById('resMaterialsCost').textContent = 'R$ ' + materialsCost.toFixed(2).replace('.', ',');
+      document.getElementById('resLaborCost').textContent = 'R$ ' + laborCost.toFixed(2).replace('.', ',');
+      document.getElementById('resTotalCost').textContent = 'R$ ' + totalCost.toFixed(2).replace('.', ',');
+      document.getElementById('resNetProfit').textContent = 'R$ ' + profit.toFixed(2).replace('.', ',');
+      document.getElementById('resSalePrice').textContent = 'R$ ' + salePrice.toFixed(2).replace('.', ',');
+      document.getElementById('resMonthProfit').textContent = 'R$ ' + monthProfit.toFixed(2).replace('.', ',');
+    }
+
+    function loadPreset(type) {
+      if (type === 'ninho') {
+        document.getElementById('modelName').value = 'Casinha Ninho Padrão (Passarinho)';
+        document.getElementById('costWood').value = '11.50';
+        document.getElementById('costSlats').value = '3.00';
+        document.getElementById('costHardware').value = '2.50';
+        document.getElementById('costGlue').value = '1.20';
+        document.getElementById('costPaint').value = '2.50';
+        document.getElementById('costFinish').value = '2.00';
+        document.getElementById('laborHours').value = '0.75';
+        document.getElementById('laborHourlyRate').value = '18.00';
+        document.getElementById('profitMargin').value = '110';
+      } else if (type === 'comedouro') {
+        document.getElementById('modelName').value = 'Comedouro Automático por Gravidade';
+        document.getElementById('costWood').value = '15.00';
+        document.getElementById('costSlats').value = '4.50';
+        document.getElementById('costHardware').value = '3.80';
+        document.getElementById('costGlue').value = '1.80';
+        document.getElementById('costPaint').value = '3.50';
+        document.getElementById('costFinish').value = '3.00';
+        document.getElementById('laborHours').value = '1.25';
+        document.getElementById('laborHourlyRate').value = '20.00';
+        document.getElementById('profitMargin').value = '100';
+      } else if (type === 'dupla') {
+        document.getElementById('modelName').value = 'Casinha Dupla Especial em L';
+        document.getElementById('costWood').value = '24.00';
+        document.getElementById('costSlats').value = '6.00';
+        document.getElementById('costHardware').value = '5.50';
+        document.getElementById('costGlue').value = '2.50';
+        document.getElementById('costPaint').value = '5.00';
+        document.getElementById('costFinish').value = '4.00';
+        document.getElementById('laborHours').value = '2.0';
+        document.getElementById('laborHourlyRate').value = '22.00';
+        document.getElementById('profitMargin').value = '120';
+      }
+      updateMarginLabel();
+      calculate();
+    }
+
+    function resetForm() {
+      document.getElementById('modelName').value = 'Novo Modelo';
+      document.getElementById('costWood').value = '0';
+      document.getElementById('costSlats').value = '0';
+      document.getElementById('costHardware').value = '0';
+      document.getElementById('costGlue').value = '0';
+      document.getElementById('costPaint').value = '0';
+      document.getElementById('costFinish').value = '0';
+      document.getElementById('costPackaging').value = '0';
+      document.getElementById('costOverhead').value = '0';
+      document.getElementById('laborHours').value = '1';
+      document.getElementById('laborHourlyRate').value = '20';
+      document.getElementById('profitMargin').value = '100';
+      updateMarginLabel();
+      calculate();
+    }
+
+    function copySummary() {
+      const name = document.getElementById('modelName').value;
+      const sale = document.getElementById('resSalePrice').textContent;
+      const cost = document.getElementById('resTotalCost').textContent;
+      const profit = document.getElementById('resNetProfit').textContent;
+      const text = `📐 *ORÇAMENTO & PRECIFICAÇÃO*\nModelo: *${name}*\n\n💵 Custo de Produção: ${cost}\n💰 *Preço Sugerido de Venda: ${sale}*\n📈 Lucro Líquido: ${profit}\n\n_Calculado com a Calculadora de Preços e Lucros de Casinhas de Aves_`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Resumo copiado! Cole no WhatsApp do cliente.');
+      });
+    }
+
+    window.onload = function() {
+      updateMarginLabel();
+      calculate();
+    };
+  </script>
 </body>
 </html>
