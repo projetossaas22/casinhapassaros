@@ -3,11 +3,11 @@
 
 [[redirects]]
   from = "/calculadora"
-  to = "/calculadora/index.html"
+  to = "/calculadora.html"
   status = 200
 
 [[redirects]]
-  from = "/calculadora/*"
+  from = "/calculadora/"
   to = "/calculadora/index.html"
   status = 200
 
